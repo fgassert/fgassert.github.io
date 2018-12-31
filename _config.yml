@@ -1,0 +1,17 @@
+title: Francis Gassert
+email: hello@fgassert.com
+description: Francis Gassert helps organizations do more with data and technology 
+baseurl: ""
+url: "https://fgassert.com"
+twitter_username: fgassert
+github_username:  fgassert
+collections:
+  projects:
+    output: true
+
+# Build settings
+markdown: kramdown
+theme: minima
+
+# Exclude from processing.
+# exclude:
