@@ -246,3 +246,22 @@ header {
 .content {
   text-align: left;
 }
+
+form { }
+
+input, textarea {
+  border: 1px solid $lightgray;
+  border-radius: 2px;
+  font-family: $font-family;
+  font-size: $font-size;
+  padding: 4px 12px;
+  box-sizing: border-box;
+  &:focus {
+    border: 1px solid darken($lightgray, 20%);
+  }
+}
+
+label{
+  display: block;
+  margin-bottom: .5em;
+}

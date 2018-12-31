@@ -8,7 +8,7 @@ With each project Francis seeks to understand the fundamental issues, whether
 social, organizational, or technical, and find solutions that will last.
 
 Most recently, Francis led data and digital project strategy as 
-[World Resources Institute](https://wri.org)’s 
+[World Resources Institute's](https://wri.org) 
 Data for Impact Lead, where he managed the development of 
 [Resource Watch](https://resourcewatch.org) 
 and advised teams on product design, engineering, and
