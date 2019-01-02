@@ -263,7 +263,6 @@ Life = ((document, window) => {
           .scale(1/cellsize)
           .rotate(-Math.PI/4);
     const xy = t.project(x + cellsize/2, y + cellsize/2);
-    console.log(t);
     return xy;
   };
 
