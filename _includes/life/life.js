@@ -235,11 +235,13 @@ Life = ((document, window) => {
     const l = el.offsetLeft;
     const w = el.offsetWidth;
     const h = el.offsetHeight;
+    const dpr = (x < 2048) ? window.devicePixelRatio || 1 : 1;
+
     props.transform = new mat3();
     props.transform.rotate(Math.PI/4).translate(l+w/2, t+h/2).normalize(x, y, true);
 
-    canvas.width = x;
-    canvas.height = y;
+    canvas.width = x * dpr;
+    canvas.height = y * dpr;
 
     transformProgram.setUniform('u_transform', props.transform.values());
     setRenderRadius(h/2);
@@ -619,13 +621,13 @@ void main() {
       throw "Data not Array-like length 9";
     },
     fromTransform: function(scale, rotate, translate) {
-        const [sx, sy] = (typeof(scale) == 'number') ? [scale, scale] : scale;
-        const s = Math.sin(rotate);
-        const c = Math.cos(rotate);
-        return new Float32Array(
-            [sx * c, sx * -s, 0,
-             sy * s, sy * c,  0,
-             tx,     ty,      1]);
+      const [sx, sy] = (typeof(scale) == 'number') ? [scale, scale] : scale;
+      const s = Math.sin(rotate);
+      const c = Math.cos(rotate);
+      return new Float32Array(
+        [sx * c, sx * -s, 0,
+         sy * s, sy * c,  0,
+         tx,     ty,      1]);
     },
     identity: function() {
       return new Float32Array(
