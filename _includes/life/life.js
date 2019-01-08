@@ -108,19 +108,31 @@ Life = ((document, window) => {
       return [e.offsetX + e.target.offsetLeft - ui.target.offsetLeft,
               e.offsetY + e.target.offsetTop - ui.target.offsetTop];
     };
+    const getRelativeTouchPosition = (e) => {
+      return [e.pageX - e.target.scrollLeft - ui.target.offsetLeft,
+              e.pageY - e.target.scrollTop - ui.target.offsetTop];
+    };
 
     const touchEnd = (e) => {
-      (props.drawing > -1) ? setDrawing(-1) : toggle();
+      if (props.drawing > -1) {
+        setDrawing(-1);
+      } else if (!props.fullscreen) {
+        toggle();
+      }
+      e.preventDefault();
     };
     const touchMove = (e) => {
       if (e.changedTouches.length > 0) {
-        const t = e.changedTouches.item(0);
-        setCursor(...getRelativePosition(t));
-        setDrawing(getCursor());
+        let t = e.changedTouches.item(0);
+        setCursor(...getRelativeTouchPosition(t));
+        if (props.drawing < 0)
+          setDrawing(getCursor());
         step();
-        e.preventDefault();
+
       }
+      e.preventDefault();
     };
+    const touchStart = (e) => {e.preventDefault();};
     const mouseDown = (e) => {
       canvas.focus();
       setCursor(...getRelativePosition(e));
@@ -166,6 +178,8 @@ Life = ((document, window) => {
     canvas.addEventListener('touchend', touchEnd, null);
     target.addEventListener('touchmove', touchMove, null);
     canvas.addEventListener('touchmove', touchMove, null);
+    target.addEventListener('touchstart', touchStart, null);
+    canvas.addEventListener('touchstart', touchStart, null);
 
     target.addEventListener('mousemove', mouseMove, null);
     target.addEventListener('mousedown', mouseDown, null);
@@ -306,7 +320,6 @@ Life = ((document, window) => {
     let iter = 0;
     while (props.timeDelta >= timestep) {
       let stepFrame = props.frames % props.speed;
-      console.log(stepFrame);
       if (props.transition) _transition();
       if (!props.stopped && stepFrame == 0)
         _step();
@@ -423,7 +436,6 @@ Life = ((document, window) => {
     const gx = Math.floor(((props.cursor[0]) % settings.W + settings.W) % settings.W);
     const gy = Math.floor(((props.cursor[1]) % settings.H + settings.H) % settings.H);
     const data = stepProgram.readPixels(gx, gy);
-    console.log(data);
     return data;
   };
 
