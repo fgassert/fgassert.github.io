@@ -3,10 +3,10 @@
 Life = ((document, window) => {
   'use strict';
 
-  // private props
+  let lifeEl;
   let canvas;
   let gl;
-  let el;
+  let target;
   let textures;
   let framebuffers;
   let stepProgram;
@@ -19,26 +19,171 @@ Life = ((document, window) => {
     W: 512,
     H: 512,
     cellsize: 8,
-    framerate: 24,
+    framerate: 60,
     initSteps: 5,
-    radius: 80,
-    canvasElementId: 'life',
+    lifeElementId: 'life',
     targetElementId: 'life-target'
   };
 
   let props = {
-    cycles: 0,
-    stopped: true,
-    rescale: false,
-    drawing: false,
+    frames: 0,
+    steps: 0,
     lastTimestamp: 0,
-    transform: null
+    timeDelta: 0,
+    fpsTimestamp: 0,
+    fpsFrames: 0,
+    fps: 0,
+    speed: 4,
+    rad: 80,
+    texSize: null,
+    stopped: true,
+    drawing: -1,
+    transform: null,
+    cursor: null,
+    timeout: null
+  };
+
+  let ui = {
+    p1: null,
+    p2: null,
+    p3: null,
+    startBtn: null,
+    stepBtn: null,
+    speedBtn: null,
+    randomBtn: null,
+    target: null,
+    steps: null,
+    framerate: null
+  };
+
+  const createElement = function(node, className, onClick, text) {
+    let el = document.createElement(node);
+    if (className) el.className = className;
+    if (onClick) el.addEventListener('click', onClick, null);
+    if (text) el.appendChild(document.createTextNode(text));
+    return el;
+  };
+
+  const initUI = function() {
+    lifeEl = document.getElementById(settings.lifeElementId);
+    canvas = createElement('canvas', 'life-canvas');
+    canvas.tabIndex = -1;
+
+    ui.target = target = document.getElementById(settings.targetElementId) || canvas;
+    ui.container = createElement('div', 'life-ui');
+    ui.p1 = createElement('div', 'life-panel -top -right');
+    ui.exitBtn = createElement('button', 'life-btnExit', (e)=>{setFullscreen(false);}, "Exit");
+
+    ui.p2 = createElement('div', 'life-panel -bottom -left');
+    ui.startBtn = createElement('button', 'life-btnStart -stopped', (e)=>{toggle();}, 'Play');
+    ui.stepBtn = createElement('button', 'life-btnStep', (e)=>{step();}, 'Step');
+    ui.speedBtn = createElement('button', 'life-btnSpeed', (e)=>{stepSpeed();}, 'Speed');
+    ui.randomBtn = createElement('button', 'life-btnRandomize', (e)=>{randomize();}, 'Reset');
+
+    ui.p3 = createElement('div', 'life-panel -top -left -transparent');
+    ui.steps = createElement('p', null, null, 'Steps: 0');
+    ui.framerate = createElement('p', null, null, 'Fps: 0.0');
+
+    ui.p4 = createElement('div', 'life-panel -bottom -right -transparent');
+    ui.info = createElement('button', 'life-btnInfo', null, 'What is this?');
+
+    ui.p1.appendChild(ui.exitBtn);
+    ui.p2.appendChild(ui.startBtn);
+    ui.p2.appendChild(ui.stepBtn);
+    ui.p2.appendChild(ui.speedBtn);
+    ui.p2.appendChild(ui.randomBtn);
+    //ui.p3.appendChild(ui.steps);
+    //ui.p3.appendChild(ui.framerate);
+    ui.p4.appendChild(ui.info);
+
+    ui.container.appendChild(ui.p1);
+    ui.container.appendChild(ui.p2);
+    ui.container.appendChild(ui.p3);
+    ui.container.appendChild(ui.p4);
+
+    lifeEl.appendChild(canvas);
+    lifeEl.appendChild(ui.container);
+
+    const getRelativePosition = (e) => {
+      return [e.offsetX + e.target.offsetLeft - ui.target.offsetLeft,
+              e.offsetY + e.target.offsetTop - ui.target.offsetTop];
+    };
+
+    const touchEnd = (e) => {
+      (props.drawing > -1) ? setDrawing(-1) : toggle();
+    };
+    const touchMove = (e) => {
+      if (e.changedTouches.length > 0) {
+        const t = e.changedTouches.item(0);
+        setCursor(...getRelativePosition(t));
+        setDrawing(getCursor());
+        step();
+        e.preventDefault();
+      }
+    };
+    const mouseDown = (e) => {
+      canvas.focus();
+      setCursor(...getRelativePosition(e));
+      setDrawing(getCursor());
+      step();
+      e.preventDefault();
+    };
+    const mouseMove = (e) => {
+      if (props.drawing >= 0) {
+        setCursor(...getRelativePosition(e));
+        step();
+      }
+    };
+    const mouseUp = (e) => {setDrawing(-1);};
+    const mouseOver = (e) => {
+      start();
+      props.timeout = setTimeout(()=>{setFullscreen(true);}, 5000);
+    };
+    const mouseOut = (e) => {
+      if (!props.fullscreen) {
+        setDrawing(-1);
+        stop();
+      }
+      if (props.timeout)
+        clearTimeout(props.timeout);
+    };
+    const resize = (e) => {rescale(); render();};
+    const keypress = (e) => {
+      if (e.key == 'Escape') {
+        setFullscreen(false);
+      } else if (e.key == 'f') {
+        setFullscreen(true);
+      } else if (e.key == 'p') {
+        toggle();
+      } else if (e.key == 's') {
+        step();
+      } else if (e.key == 'r') {
+        randomize();
+      }
+    };
+
+    target.addEventListener('touchend', touchEnd, null);
+    canvas.addEventListener('touchend', touchEnd, null);
+    target.addEventListener('touchmove', touchMove, null);
+    canvas.addEventListener('touchmove', touchMove, null);
+
+    target.addEventListener('mousemove', mouseMove, null);
+    target.addEventListener('mousedown', mouseDown, null);
+    target.addEventListener('mouseup', mouseUp, null);
+    canvas.addEventListener('mousemove', mouseMove, null);
+    canvas.addEventListener('mousedown', mouseDown, null);
+    canvas.addEventListener('mouseup', mouseUp, null);
+    target.addEventListener('mouseout', mouseOut, null);
+    target.addEventListener('mouseover', mouseOver, null);
+
+    window.addEventListener('resize', resize, null);
+    canvas.addEventListener('keydown', keypress, null);
   };
 
   const init = function(options) {
     options && Object.assign(options, settings);
-    canvas = document.getElementById(settings.canvasElementId);
-    el = document.getElementById(settings.targetElementId);
+    initUI();
+
     gl = canvas.getContext('webgl');
     if (!gl) {
       console.log('No webgl :(');
@@ -53,7 +198,7 @@ Life = ((document, window) => {
       },
       uniforms: {
         u_texsize: [settings.W, settings.H],
-        u_drawing: 0,
+        u_drawing: -1,
         u_cursor: [0, 0]
       }
     });
@@ -66,7 +211,9 @@ Life = ((document, window) => {
         u_texsize: [settings.W, settings.H],
         u_cellsize: settings.cellsize,
         u_center: [0, 0],
-        u_rad: settings.radius
+        u_rad: 0,
+        u_fullscreen: 0,
+        u_shimmer: 0
       }
     });
     transformProgram = new glProgram(gl, transformShaderSrc, transformFragmentSrc, {
@@ -80,7 +227,7 @@ Life = ((document, window) => {
       }
     });
 
-    const data = randomData(settings.W * settings.H * 4);
+    const data = randomData(settings.W, settings.H);
     const texOptions = {
       width: settings.W,
       height: settings.H,
@@ -112,60 +259,34 @@ Life = ((document, window) => {
     });
     renderFrame = renderProgram.newFramebuffer(renderTex);
 
-    rescale();
-    for (let i=0; i<settings.initSteps; i++) {
+    for (let i=0; i<settings.initSteps; i++)
       _step();
-    }
-    step();
-    addListeners();
+    rescale();
+    requestAnimationFrame(main);
     return this;
   };
 
-  const addListeners = function() {
-    el.addEventListener('touchend', (e) => {
-      if (props.drawing){
-        setDrawing(0);
-      } else if (props.stopped) {
-        start();
-      } else {
-        stop();
-      }}, null);
-    el.addEventListener('touchmove', (e) => {
-      if (e.changedTouches.length > 0) {
-        const t = e.changedTouches.item(0);
-        setCursor(t.clientX, t.clientY), setDrawing(1);
-      }
-    }, null);
-    el.addEventListener('mousemove', (e) => {
-      props.drawing && setCursor(e.clientX, e.clientY); }, null);
-    el.addEventListener('mousedown', (e) => {
-      setCursor(e.clientX, e.clientY), setDrawing(1); }, null);
-    el.addEventListener('mouseup', (e) => {
-      setCursor(e.clientX, e.clientY), setDrawing(0); }, null);
-    el.addEventListener('mouseout', (e) => {
-      setDrawing(0); stop(); }, null);
-    el.addEventListener('mouseover', (e) => {
-      start(); }, null);
-    window.addEventListener('resize', (e) => {
-      rescale();
-      render(); }, null);
+  const _getStep = function() {
+    return props.steps % 2;
   };
 
-
   const _step = function() {
-    const i = props.cycles % 2;
+    const i = _getStep();
     stepProgram.use();
     stepProgram.setTexture(textures[i]);
     stepProgram.setFramebuffer(framebuffers[1-i], settings.W, settings.H);
     stepProgram.draw();
-    props.cycles++;
+    //ui.steps.textContent = "Steps: " + props.steps;
+    props.steps++;
   };
 
-  const render = function() {
-    const i = props.cycles % 2;
+  const render = function(frameOffset) {
+    const i = _getStep();
+    frameOffset = frameOffset || 0;
     renderProgram.use();
+    renderProgram.setUniform('u_shimmer', (frameOffset*frameOffset/25.0));
     renderProgram.setTexture(textures[i]);
-    renderProgram.setFramebuffer(renderFrame, canvas.width, canvas.height);
+    renderProgram.setFramebuffer(renderFrame, props.texSize, props.texSize);
     renderProgram.draw();
     transformProgram.use();
     transformProgram.setTexture(renderTex);
@@ -173,41 +294,141 @@ Life = ((document, window) => {
     transformProgram.draw();
   };
 
-  const step = function() {
-    _step();
-    render();
-  };
-
   const main = function(t) {
-    if (props.stopped) return;
-    step();
-    if (settings.framerate) {
-      let wait = 1000/settings.framerate - (t - props.lastTimestamp);
-      props.lastTimestamp = t;
-      if (wait > 0) {
-        window.setTimeout(main, wait);
-        return;
+    const timestep = 1000/settings.framerate;
+    if (t < props.lastTimestamp + timestep) {
+      requestAnimationFrame(main);
+      return;
+    }
+    props.timeDelta += t - props.lastTimestamp;
+    props.lastTimestamp = t;
+
+    let iter = 0;
+    while (props.timeDelta >= timestep) {
+      let stepFrame = props.frames % props.speed;
+      console.log(stepFrame);
+      if (props.transition) _transition();
+      if (!props.stopped && stepFrame == 0)
+        _step();
+      if (!props.stopped || props.transition) {
+        render(stepFrame / props.speed);
+      }
+      props.timeDelta -= timestep;
+      props.frames++;
+      if (iter > 2) {
+        props.timeDelta = 0;
+        break;
       }
     }
-    props.animation = requestAnimationFrame(main);
+
+    if (t > props.fpsTimestamp + 500) {
+      props.fps = (props.frames - props.fpsFrames) + props.fps / 2;
+      //ui.framerate.textContent = "Fps: " + props.fps.toFixed(1);
+      props.fpsTimestamp = t;
+      props.fpsFrames = props.frames;
+    }
+
+    requestAnimationFrame(main);
   };
 
   const start = function() {
     if (props.stopped) {
       props.stopped = false;
-      props.animation = requestAnimationFrame(main);
+    }
+    if (ui.startBtn) {
+      ui.startBtn.classList.remove('-stopped');
+      ui.startBtn.textContent = 'Pause';
     }
   };
 
   const stop = function() {
-    if (props.animation)
-      cancelAnimationFrame(props.animation);
     props.stopped = true;
+    if (ui.startBtn) {
+      ui.startBtn.classList.add('-stopped');
+      ui.startBtn.textContent = 'Play';
+    }
+  };
+
+  const step = function() {
+    _step();
+    render();
+  };
+
+  const toggle = function() {
+    if (props.stopped) {
+      start();
+    } else {
+      stop();
+    }
+  };
+
+  const setFullscreen = function(state) {
+    props.fullscreen = state;
+    if (state) {
+      canvas.focus();
+      lifeEl.classList.add('-fullscreen');
+      props.transition = true;
+    } else {
+      if (props.timeout) clearTimeout(props.timeout);
+      renderProgram.setUniform('u_fullscreen', state);
+      lifeEl.classList.remove('-fullscreen');
+      stop();
+      rescale();
+      }
+  };
+
+  const _transition = function() {
+    if (!props.fullscreen ) {
+      rescale();
+      return;
+    } else if (props.rad >= Math.max(canvas.clientWidth, canvas.clientHeight)*2) {
+      props.transition = false;
+      renderProgram.setUniform('u_fullscreen', 1);
+    } else {
+      setRenderRadius(props.rad*1.1/2);
+    }
+  };
+
+  const stepSpeed = function(speed) {
+    if (speed) {
+      props.speed = speed;
+    } else if (props.speed <= 1) {
+      props.speed = 4 * 4;
+    } else {
+      props.speed /= 4;
+    };
+  };
+
+  const randomize = function() {
+    const data = randomData(settings.W, settings.H);
+    props.steps = 0;
+    stepProgram.updateTexture(textures[_getStep()], data,
+                              {width: settings.W, height: settings.H});
+    for (let i=0; i<settings.initSteps; i++) {
+      _step();
+    }
+    render();
   };
 
   const setCursor = function(x, y) {
-    stepProgram.setUniform('u_cursor', client2grid(x, y));
-    _step();
+    props.cursor = client2grid(x, y);
+    stepProgram.setUniform('u_cursor', props.cursor);
+  };
+
+  const _getCursor = function(x, y) {
+    if (x !== undefined && y !== undefined) {
+      props.cursor = client2grid(x, y);
+    }
+    stepProgram.setFramebuffer(framebuffers[_getStep()], settings.W, settings.H);
+    const gx = Math.floor(((props.cursor[0]) % settings.W + settings.W) % settings.W);
+    const gy = Math.floor(((props.cursor[1]) % settings.H + settings.H) % settings.H);
+    const data = stepProgram.readPixels(gx, gy);
+    console.log(data);
+    return data;
+  };
+
+  const getCursor = function(x, y) {
+    return _getCursor(x, y)[0] < 255 ? 1: 0;
   };
 
   const setDrawing = function(state) {
@@ -222,33 +443,36 @@ Life = ((document, window) => {
   };
 
   const setRenderRadius = function(r) {
+    props.rad = r * 2;
     renderProgram.setUniform('u_rad', r);
-    renderProgram.setUniform('u_center', [r, r]);
-    renderProgram.updateTexture(renderTex, null, {width: 2*r, height:2*r});
-    transformProgram.setAttribute('a_position', rectArray(-r, -r, 2*r, 2*r));
   };
 
   const rescale = function() {
     const x = canvas.clientWidth;
     const y = canvas.clientHeight;
-    const t = el.offsetTop;
-    const l = el.offsetLeft;
-    const w = el.offsetWidth;
-    const h = el.offsetHeight;
-    const dpr = (x < 2048) ? window.devicePixelRatio || 1 : 1;
+    const t = target.offsetTop;
+    const l = target.offsetLeft;
+    const w = target.offsetWidth;
+    const h = target.offsetHeight;
+    const dpr = x < 1024 ? window.devicePixelRatio || 1 : 1;
 
     props.transform = new mat3();
     props.transform.rotate(Math.PI/4).translate(l+w/2, t+h/2).normalize(x, y, true);
 
+    const ts = Math.max(x, y);
+    props.transition = false;
+    props.texSize = ts * 2;
+    props.rad = w/2;
+
     canvas.width = x * dpr;
     canvas.height = y * dpr;
 
+    renderProgram.setUniform('u_rad', w/2);
+    renderProgram.setUniform('u_center', [ts, ts]);
+    renderProgram.updateTexture(renderTex, null, {width:ts*2, height:ts*2});
     transformProgram.setUniform('u_transform', props.transform.values());
-    setRenderRadius(h/2);
-  };
-
-  const targetRelative = function(x, y) {
-    return [-el.offsetLeft + x, -el.offsetTop + y];
+    transformProgram.setAttribute('a_position', rectArray(-ts, -ts, ts*2, ts*2));
+    render();
   };
 
   const client2grid = function(x, y, cellsize) {
@@ -259,12 +483,12 @@ Life = ((document, window) => {
       to get cell coordinates from client coordinates,
       subtract center, divide by cell size, and reverse rotation.
     */
-    [x, y] = targetRelative(x, y);
     cellsize = cellsize || settings.cellsize;
-    const t = new mat3().translate(-el.clientWidth/2, -el.clientHeight/2)
+    const t = new mat3().translate(-target.clientWidth/2, -target.clientHeight/2)
           .scale(1/cellsize)
-          .rotate(-Math.PI/4);
-    const xy = t.project(x + cellsize/2, y + cellsize/2);
+          .rotate(-Math.PI/4)
+          .translate(.5,.5);
+    const xy = t.project(x, y);
     return xy;
   };
 
@@ -289,7 +513,39 @@ Life = ((document, window) => {
     return new Float32Array(data);
   };
 
-  const randomData = function(size) {
+  const rPentominoData = function(w, h) {
+    const coords = [
+      [1, 0],
+      [2, 0],
+      [0, 1],
+      [1, 1],
+      [1, 2]
+    ];
+    return getData(w, h, coords);
+  };
+
+  const acornData = function(w, h) {
+    const coords = [
+      [1, 0],
+      [3, 1],
+      [0, 2],
+      [1, 2],
+      [4, 2],
+      [5, 2],
+      [6, 2],
+    ];
+    return getData(w, h, coords);
+  };
+
+  const getData = function(w, h, coords) {
+    let data = new Uint8Array(w * h * 4);
+    for (let i in coords)
+      data[coords[i][0]* 4 + coords[i][1]*w*4] = 255;
+    return data;
+  };
+
+  const randomData = function(w, h) {
+    const size = w * h * 4;
     let data = new Uint8Array(size);
     for (let i = 0; i < size; i++)
       data[i] = Math.random() > 0.5 ? 255 : 0;
@@ -316,6 +572,9 @@ uniform sampler2D u_image;
 uniform float u_cellsize;
 uniform vec2 u_center;
 uniform float u_rad;
+uniform int u_fullscreen;
+uniform float u_shimmer;
+
 varying vec2 v_texCoord;
 
 void main() {
@@ -325,22 +584,22 @@ void main() {
   vec2 grid_pos = floor(pos / u_cellsize + .5);
   float rad = floor(u_rad / u_cellsize);
 
-  if (dot(grid_pos, grid_pos) < rad*rad) {
+  if (u_fullscreen > 0 || dot(grid_pos, grid_pos) < rad*rad) {
     if (u_cellsize > 2. && (
       mod(pos.x + u_cellsize/2., u_cellsize) < 1. ||
       mod(pos.y + u_cellsize/2., u_cellsize) < 1.)) {
       gl_FragColor = vec4(1,1,1,1);
     } else {
       vec4 val = texture2D(u_image, (grid_pos+.5) / u_texsize);
-      if (val.x > 0.) {
-        gl_FragColor = vec4(.2, cos(val.x), sin(val.x*1.5),1) * val.x +
+      if (val.x >= 1.) {
+        gl_FragColor = vec4(.2, cos(1.), sin(1.5), 1);
+      } else if (val.x > 0.1) {
+        gl_FragColor = vec4(.2, cos(val.x), sin(val.x*1.5),1) * (val.x - u_shimmer) +
                        vec4(.95, .95, .98, 1) * (1.-val.x);
       } else {
         gl_FragColor = vec4(.95, .95, .98, 1);
       }
     }
-  } else {
-    gl_FragColor = vec4(1,1,1,0);
   }
 }
 `;
@@ -358,10 +617,10 @@ void main() {
   vec2 pos = v_texCoord;
   vec2 one_px = vec2(1, 1) / u_texsize;
 
-  if (u_drawing > 0) {
+  if (u_drawing > -1) {
     vec2 dpos = pos * u_texsize - mod(u_cursor, u_texsize);
     if (abs(dpos.x) < .5 && abs(dpos.y) < .5) {
-      gl_FragColor = vec4(1, 1, 0, 1);
+      gl_FragColor = vec4(u_drawing, 1, 0, 1);
     } else {
       gl_FragColor = texture2D(u_image, pos);
     }
@@ -496,6 +755,14 @@ void main() {
 
     setDrawMode: function(mode) {
       this.draw_mode = mode;
+    },
+
+    readPixels: function(x, y, width, height) {
+      width = width || 1;
+      height = height || 1;
+      let data = new Uint8Array(width * height * 4);
+      this.gl.readPixels(x, y, width, height, gl.RGBA, gl.UNSIGNED_BYTE, data);
+      return data;
     },
 
     newBuffer: function(data, hint) {
@@ -724,9 +991,9 @@ void main() {
     start: start,
     stop: stop,
     step: step,
+    randomize: randomize,
+    setFullscreen: setFullscreen,
     setCellsize: setCellsize,
-    setDrawing: setDrawing,
-    setCursor: setCursor,
     gl: () => {return(gl);},
     m3: mat3
   };

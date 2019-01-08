@@ -1,0 +1,14 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="20px" height="20px" viewBox="0 0 20 20" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 52.5 (67469) - http://www.bohemiancoding.com/sketch -->
+    <title>info</title>
+    <desc>Created with Sketch.</desc>
+    <g id="info" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="Group" transform="translate(3.000000, 3.000000)">
+            <circle id="Oval" stroke="#F2F2FA" cx="7" cy="7" r="7"></circle>
+            <text id="i" font-family="PTSerif-Bold, PT Serif" font-size="11" font-weight="bold" fill="#333136">
+                <tspan x="5.174" y="11">i</tspan>
+            </text>
+        </g>
+    </g>
+</svg>
