@@ -22,7 +22,8 @@ Life = ((document, window) => {
     framerate: 60,
     initSteps: 5,
     lifeElementId: 'life',
-    targetElementId: 'life-target'
+    targetElementId: 'life-target',
+    maxRes: 4096
   };
 
   let props = {
@@ -93,7 +94,7 @@ Life = ((document, window) => {
     ui.p2.appendChild(ui.speedBtn);
     ui.p2.appendChild(ui.randomBtn);
     //ui.p3.appendChild(ui.steps);
-    //ui.p3.appendChild(ui.framerate);
+    ui.p3.appendChild(ui.framerate);
     ui.p4.appendChild(ui.info);
 
     ui.container.appendChild(ui.p1);
@@ -117,7 +118,14 @@ Life = ((document, window) => {
       if (props.drawing > -1) {
         setDrawing(-1);
       } else if (!props.fullscreen) {
-        toggle();
+        if (props.stopped) {
+          props.timeout = setTimeout(()=>{setFullscreen(true);}, 5000);
+          start();
+        } else {
+          if (props.timeout)
+            clearTimeout(props.timeout);
+          stop();
+        }
       }
       e.preventDefault();
     };
@@ -146,11 +154,11 @@ Life = ((document, window) => {
         step();
       }
     };
-    const mouseUp = (e) => {setDrawing(-1);};
-    const mouseOver = (e) => {
-      start();
-      props.timeout = setTimeout(()=>{setFullscreen(true);}, 5000);
-    };
+      const mouseUp = (e) => {setDrawing(-1);};
+      const mouseOver = (e) => {
+        start();
+        props.timeout = setTimeout(()=>{setFullscreen(true);}, 5000);
+      };
     const mouseOut = (e) => {
       if (!props.fullscreen) {
         setDrawing(-1);
@@ -328,15 +336,17 @@ Life = ((document, window) => {
       }
       props.timeDelta -= timestep;
       props.frames++;
+      iter++;
       if (iter > 2) {
         props.timeDelta = 0;
         break;
       }
     }
+    props.fpsFrames += iter -1;
 
     if (t > props.fpsTimestamp + 500) {
       props.fps = (props.frames - props.fpsFrames) + props.fps / 2;
-      //ui.framerate.textContent = "Fps: " + props.fps.toFixed(1);
+      ui.framerate.textContent = "Fps: " + props.fps.toFixed(1);
       props.fpsTimestamp = t;
       props.fpsFrames = props.frames;
     }
@@ -466,12 +476,12 @@ Life = ((document, window) => {
     const l = target.offsetLeft;
     const w = target.offsetWidth;
     const h = target.offsetHeight;
-    const dpr = x < 1024 ? window.devicePixelRatio || 1 : 1;
-
-    props.transform = new mat3();
-    props.transform.rotate(Math.PI/4).translate(l+w/2, t+h/2).normalize(x, y, true);
-
     const ts = Math.max(x, y);
+    const dpr = Math.min(window.devicePixelRatio || 1, settings.maxRes / ts);
+
+    const transform = new mat3().rotate(Math.PI/4).translate(l+w/2, t+h/2).normalize(x, y, true);
+    const inverse = new mat3().translate(-(l+w/2), -(t+h/2)).rotate(-Math.PI/4).scale(1/ts);
+    props.transform = transform;
     props.transition = false;
     props.texSize = ts * 2;
     props.rad = w/2;
@@ -481,8 +491,9 @@ Life = ((document, window) => {
 
     renderProgram.setUniform('u_rad', w/2);
     renderProgram.setUniform('u_center', [ts, ts]);
+    renderProgram.setAttribute('a_position', rectArray(0, 0, x, y, inverse));
     renderProgram.updateTexture(renderTex, null, {width:ts*2, height:ts*2});
-    transformProgram.setUniform('u_transform', props.transform.values());
+    transformProgram.setUniform('u_transform', transform.values());
     transformProgram.setAttribute('a_position', rectArray(-ts, -ts, ts*2, ts*2));
     render();
   };
@@ -504,12 +515,17 @@ Life = ((document, window) => {
     return xy;
   };
 
-  const rectArray = function(left, bottom, width, height) {
-    return new Float32Array(
-      [left, bottom,
-       left, bottom + height,
-       left + width, bottom,
-       left + width, bottom + height]);
+  const rectArray = function(left, bottom, width, height, transform) {
+    const values = transform ?
+          [...transform.project(left, bottom),
+           ...transform.project(left, bottom+height),
+           ...transform.project(left+width, bottom),
+           ...transform.project(left+width, bottom+height)] :
+          [left, bottom,
+           left, bottom + height,
+           left + width, bottom,
+           left + width, bottom + height];
+    return new Float32Array(values);
   };
 
   const circleArray = function(x, y, radius, faces) {
