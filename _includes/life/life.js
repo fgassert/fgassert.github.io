@@ -23,7 +23,8 @@ Life = ((document, window) => {
     initSteps: 5,
     lifeElementId: 'life',
     targetElementId: 'life-target',
-    maxRes: 4096
+    maxRes: 4096,
+    timeout: 3000,
   };
 
   let props = {
@@ -94,7 +95,7 @@ Life = ((document, window) => {
     ui.p2.appendChild(ui.speedBtn);
     ui.p2.appendChild(ui.randomBtn);
     //ui.p3.appendChild(ui.steps);
-    ui.p3.appendChild(ui.framerate);
+    //ui.p3.appendChild(ui.framerate);
     ui.p4.appendChild(ui.info);
 
     ui.container.appendChild(ui.p1);
@@ -119,7 +120,7 @@ Life = ((document, window) => {
         setDrawing(-1);
       } else if (!props.fullscreen) {
         if (props.stopped) {
-          props.timeout = setTimeout(()=>{setFullscreen(true);}, 5000);
+          props.timeout = setTimeout(()=>{setFullscreen(true);}, settings.timeout);
           start();
         } else {
           if (props.timeout)
@@ -157,7 +158,7 @@ Life = ((document, window) => {
       const mouseUp = (e) => {setDrawing(-1);};
       const mouseOver = (e) => {
         start();
-        props.timeout = setTimeout(()=>{setFullscreen(true);}, 5000);
+        props.timeout = setTimeout(()=>{setFullscreen(true);}, settings.timeout);
       };
     const mouseOut = (e) => {
       if (!props.fullscreen) {
