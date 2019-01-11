@@ -1,13 +1,13 @@
 ---
 layout: default
 title: About
-subtitle: Francis helps organizations accomplish more with data and technology. 
+subtitle: I help organizations accomplish more with data and technology. 
 ---
 
-With each project Francis seeks to understand the fundamental issues, whether
+With each project I seek to understand the fundamental issues, whether
 social, organizational, or technical, and find solutions that will last.
 
-Most recently, Francis led data and digital project strategy as 
+Most recently, I led data and digital project strategy as 
 [World Resources Institute's](https://wri.org) 
 Data for Impact Lead, where he managed the development of 
 [Resource Watch](https://resourcewatch.org) 
