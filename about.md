@@ -9,7 +9,7 @@ social, organizational, or technical, and find solutions that will last.
 
 Most recently, I led data and digital project strategy as 
 [World Resources Institute's](https://wri.org) 
-Data for Impact Lead, where he managed the development of 
+Data for Impact Lead, where I managed the development of 
 [Resource Watch](https://resourcewatch.org) 
 and advised teams on product design, engineering, and
 research methodology. 
