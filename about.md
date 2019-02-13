@@ -12,6 +12,10 @@ Most recently, I led data and digital project strategy as
 Data for Impact Lead, where I managed the development of 
 [Resource Watch](https://resourcewatch.org) 
 and advised teams on product design, engineering, and
-research methodology. 
+research methodology. I also worked on climate change and
+water resources modeling on the [Partnership for 
+Resilience and Preparedness](https://prepdata.org), and
+WRI's [Aqueduct](https://wri.org/aqueduct) Water Risk 
+Atlas.
 
 [Get in touch.](/contact)
