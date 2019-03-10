@@ -8,6 +8,8 @@ github_username:  fgassert
 collections:
   projects:
     output: true
+  small_projects:
+    output: true
 
 # Build settings
 markdown: kramdown

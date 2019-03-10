@@ -7,9 +7,23 @@ layout: default
   {% for post in site.projects %}
   <div class="card" style="background-image:url({{post.thumb}})">
     <a href={{post.url}}>
-      <h2>{{post.title}}</h2>
-      <p>{{post.subtitle}}</p>
+      <span>
+        <h2>{{post.title}}</h2>
+        <p>{{post.subtitle}}</p>
+      </span>
     </a>
   </div>
   {% endfor %}
+</div>
+<br>
+<h1>Code and experiments</h1>
+{% for post in site.small_projects %}
+<a href={{post.url}}>
+  <div>
+    <h2>{{post.title}}</h2>
+    <p>{{post.subtitle}}</p>
+  </div>
+</a>
+{% endfor %}
+</ul>
 </div>

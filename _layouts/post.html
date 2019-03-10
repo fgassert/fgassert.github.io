@@ -3,13 +3,18 @@
   {% include head.html%}
   <body>
     <div class="post-grid">
-      <div class="grid-banner">
-        <img src="{{page.banner}}" alt="{{page.alt}}"></img>
+      <div class="grid-banner" style="background-image:url({{page.banner}})">
+        {% if page.banner==null %}
+        <h1>{{page.title}}</h1>
+        {% endif %}
       </div>
       <div class="grid-nav">
         {% include nav.html %}
       </div>
       <div class="grid-content">
+        <div class="breadcrumbs">
+          <a href="/projects.html">‹ Projects</a>
+        </div>
         <header>
           <h1>{{page.title}}</h1>
           <p>{{page.subtitle}}</p>

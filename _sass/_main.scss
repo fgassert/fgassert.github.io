@@ -97,16 +97,19 @@ body {
     margin-top: 16vh;
     text-align: left;
     justify-items: stretch;
-    grid-template-columns: 20px 160px 80px 400px 20px;
+    grid-template-columns: 20px 160px 480px 20px;
     grid-template-rows: 280px auto;
     grid-row-gap: 20px;
-    grid-template-areas: "banner banner banner banner banner"
-                           ". nav . content .";
-    -ms-grid-template-columns: 160px 80px 400px;
+    grid-template-areas: "banner banner banner banner"
+                           ". nav content .";
+    -ms-grid-template-columns: 20px 160px 480px 20px;
     -ms-grid-template-rows: 280px auto;
     -ms-grid-row-gap: 20px;
-    -ms-grid-template-areas: "banner banner banner banner banner"
-                               ". nav . content .";
+    -ms-grid-template-areas: "banner banner banner banner"
+                               ". nav content .";
+    .grid-nav {
+      text-align: left;
+    }
   }
 }
 
@@ -115,6 +118,14 @@ body {
   -ms-grid-area: banner;
   width: 100%;
   overflow: hidden;
+  background-size: cover;
+  background-color: $slate;
+  color: $offwhite;
+  text-align: center;
+  flex-wrap: wrap;
+  display: flex;
+  align-content: center;
+  justify-content: center;
 }
 
 .grid-logo {
@@ -151,24 +162,33 @@ body {
     background-size: cover;
     background-color: $slate;
     background-image: url(/assets/img/default.png);
-    display: flex;
-    flex-wrap: wrap;
-    align-content: flex-end;
     margin-bottom: 1%;
 
-    a {
-      color: $lightgray;
-      padding: 10px;
+    &>a {
       width: 100%;
-      background-color: rgba($darkgray, .2);
-      &:hover {
-        background-color: rgba($darkgray, .5);
+      height: 100%;
+      display: flex;
+      flex-wrap: wrap;
+      align-content: flex-end;
+      span {
+        color: $lightgray;
+        padding: 10px;
+        width: 100%;
+        background-color: rgba($darkgray, .2);
+        h2 {
+          margin-bottom: .25em;
+        }
+        p {
+          margin: 0;
+          font-size: $small-font-size;
+        }
       }
-    }
 
-    p {
-      margin: 0;
-      font-size: $small-font-size;
+      &:hover {
+        span {
+          background-color: rgba($darkgray, .5);
+        }
+      }
     }
 
     @media (min-width: $desktop-width) {
@@ -204,6 +224,11 @@ nav {
       }
     }
   }
+}
+
+.breadcrumbs {
+  font-size: $small-font-size;
+  text-align: left;
 }
 
 h1, h2, h3, h4, p, li {
