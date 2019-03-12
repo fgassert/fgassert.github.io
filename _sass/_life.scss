@@ -68,63 +68,88 @@
         box-shadow: none;
         background: transparent;
       }
-    }
 
-    button, a {
-      display: inline-block;
-      position: relative;
-      appearance: none;
-      -moz-appearance: none;
-      -webkit-appearance: none;
-      border: 1px solid transparent;
-      border-radius: 4px;
-      background: white;
-      font: inherit;
-      text-decoration: none;
-      margin: 0 2px;
-      padding: .5em 1em;
-      padding-left: 35px;
-      transition: all .25s;
-      box-sizing: border-box;
-      &:active {
-        box-shadow: inset 0 2px 4px -2px rgba(0,0,0,.2);
-      }
-      &:before {
-        position: absolute;
-        left: 5px;
-        width: 20px;
-        height: 20px;
-        content: '';
-      }
-    }
-    .life-btnStart {
-      &:before {
-        background: url(/assets/img/pause.svg);
-      }
-      &.-stopped {
+      button, a {
+        display: inline-block;
+        position: relative;
+        appearance: none;
+        -moz-appearance: none;
+        -webkit-appearance: none;
+        border: 1px solid transparent;
+        border-radius: 4px;
+        background: white;
+        font: inherit;
+        text-decoration: none;
+        margin: 0 2px;
+        padding: .5em 1em;
+        padding-left: 35px;
+        transition: all .25s;
+        box-sizing: border-box;
+        &:active {
+          box-shadow: inset 0 2px 4px -2px rgba(0,0,0,.2);
+        }
         &:before {
-          background: url(/assets/img/play.svg);
+          position: absolute;
+          left: 5px;
+          width: 20px;
+          height: 20px;
+          content: '';
+        }
+      }
+      .life-btnStart {
+        &:before {
+          background: url(/assets/img/pause.svg);
+        }
+        &.-stopped {
+          &:before {
+            background: url(/assets/img/play.svg);
+          }
+        }
+      }
+      .life-btnStep:before {
+        background: url(/assets/img/step.svg);
+      }
+      .life-btnSpeed:before {
+        background: url(/assets/img/speed.svg);
+      }
+      .life-btnRandomize:before {
+        background: url(/assets/img/reset.svg);
+      }
+      .life-btnExit:before {
+        background: url(/assets/img/exit.svg);
+      }
+      .life-btnInfo {
+        border-radius: 20px;
+        margin: -10px;
+        box-shadow: 2px 4px 4px 2px rgba(0,0,0,.2);
+        &:before {
+          background: url(/assets/img/info.svg);
         }
       }
     }
-    .life-btnStep:before {
-      background: url(/assets/img/step.svg);
-    }
-    .life-btnSpeed:before {
-      background: url(/assets/img/speed.svg);
-    }
-    .life-btnRandomize:before {
-      background: url(/assets/img/reset.svg);
-    }
-    .life-btnExit:before {
-      background: url(/assets/img/exit.svg);
-    }
-    .life-btnInfo {
-      border-radius: 20px;
-      margin: -10px;
-      box-shadow: 2px 4px 4px 2px rgba(0,0,0,.2);
-      &:before {
-        background: url(/assets/img/info.svg);
+
+    .life-modalContainer {
+      display: none;
+      position: fixed;
+      top: 0;
+      width: 100%;
+      height: 100%;
+      &.-modal-visible {
+        display: flex;
+        align-content: center;
+        background: rgba(0,0,0,.1);
+      }
+      .life-modal {
+        position: relative;
+        background: white;
+        box-sizing: border-box;
+        box-shadow: 2px 4px 4px 1px rgba(0,0,0,.2);
+        margin: auto;
+        width: 100%;
+        max-height: 50%;
+        max-width: 40em;
+        padding: 20px;
+        overflow: auto;
       }
     }
   }

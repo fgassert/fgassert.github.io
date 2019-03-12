@@ -97,12 +97,12 @@ body {
     margin-top: 16vh;
     text-align: left;
     justify-items: stretch;
-    grid-template-columns: 20px 160px 480px 20px;
+    grid-template-columns: 20px 160px 420px 20px;
     grid-template-rows: 280px auto;
     grid-row-gap: 20px;
     grid-template-areas: "banner banner banner banner"
                            ". nav content .";
-    -ms-grid-template-columns: 20px 160px 480px 20px;
+    -ms-grid-template-columns: 20px 160px 420px 20px;
     -ms-grid-template-rows: 280px auto;
     -ms-grid-row-gap: 20px;
     -ms-grid-template-areas: "banner banner banner banner"

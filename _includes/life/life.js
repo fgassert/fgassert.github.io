@@ -42,21 +42,11 @@ Life = ((document, window) => {
     drawing: -1,
     transform: null,
     cursor: null,
-    timeout: null
+    timeout: null,
+    modal: false
   };
 
-  let ui = {
-    p1: null,
-    p2: null,
-    p3: null,
-    startBtn: null,
-    stepBtn: null,
-    speedBtn: null,
-    randomBtn: null,
-    target: null,
-    steps: null,
-    framerate: null
-  };
+  let ui = {};
 
   const createElement = function(node, className, onClick, text) {
     let el = document.createElement(node);
@@ -87,7 +77,42 @@ Life = ((document, window) => {
     ui.framerate = createElement('p', null, null, 'Fps: 0.0');
 
     ui.p4 = createElement('div', 'life-panel -bottom -right -transparent');
-    ui.info = createElement('button', 'life-btnInfo', null, 'What is this?');
+    ui.info = createElement('button', 'life-btnInfo', (e)=>{toggleModal();}, 'What is this?');
+    ui.modalContainer = createElement('div', 'life-modalContainer', (e)=>{toggleModal();});
+    ui.modal = createElement('div', 'life-modal', null);
+    ui.modal.innerHTML = `
+<h1>About</h1>
+<p>
+This is an implimentation of Conway's Game of Life, a simulation
+that is capable of producing complex behaviors from simple rules.
+</p>
+<p>
+The world is an endless grid of cells. At each step of the
+simulation, the fate of each cell depends on its eight surrounding cells.
+Lonely cells with fewer than two neighbors and crowded cells with more than
+three neighbors will turn off.
+An empty cell with exactly three neighbors will turn on.
+These two simple rules create patterns that interact and evolve in lifelike ways.
+</p>
+<p>
+Described by mathematician John Conway in 1970, <a href="https://en.wikipedia.org/wiki/Conway%27s_Game_of_Life">Life</a> is the
+most well known if a class of mathematical models known as cellular automata.
+In these grid-based simulations, most rule sets result in uninteresting uniform
+states, completely empty or full fields. Some create branching patterns,
+regular tree-like structures, and on-off oscillatiors.
+Yet a select few create structures with rich interactions.
+</p>
+<p>
+These models have been studied for their implications to computer science,
+physics, and philosophy. It is possible to create a universal computer
+within the bounds of Life (for an excellent explainer about how computers
+work, read how a few determined computer scientists programmed Tetris within a
+<a href="https://en.wikipedia.org/wiki/Conway%27s_Game_of_Life">30 trillion-cell Life field</a>.) Cellular automata can also be found within nature,
+such as the chaotic wave pattern on the <i>conus textile</i> <a href="https://en.wikipedia.org/wiki/Conus_textile">seashell</a>.
+</p>
+    `;
+
+    ui.modalContainer.appendChild(ui.modal)
 
     ui.p1.appendChild(ui.exitBtn);
     ui.p2.appendChild(ui.startBtn);
@@ -102,6 +127,7 @@ Life = ((document, window) => {
     ui.container.appendChild(ui.p2);
     ui.container.appendChild(ui.p3);
     ui.container.appendChild(ui.p4);
+    ui.container.appendChild(ui.modalContainer);
 
     lifeEl.appendChild(canvas);
     lifeEl.appendChild(ui.container);
@@ -383,6 +409,16 @@ Life = ((document, window) => {
       start();
     } else {
       stop();
+    }
+  };
+
+  const toggleModal = function(state) {
+    if (props.modal || state==false ) {
+      ui.modalContainer.classList.remove('-modal-visible')
+      props.modal = false
+    } else {
+      ui.modalContainer.classList.add('-modal-visible')
+      props.modal = true
     }
   };
 
