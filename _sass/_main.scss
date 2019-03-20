@@ -124,7 +124,7 @@ body {
   text-align: center;
   flex-wrap: wrap;
   display: flex;
-  align-content: center;
+  align-items: center;
   justify-content: center;
 }
 
@@ -169,7 +169,7 @@ body {
       height: 100%;
       display: flex;
       flex-wrap: wrap;
-      align-content: flex-end;
+      align-items: flex-end;
       span {
         color: $lightgray;
         padding: 10px;
