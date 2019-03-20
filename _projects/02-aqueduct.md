@@ -1,6 +1,8 @@
 ---
 layout: post
 title: Aqueduct
+banner: /assets/img/aqueduct.png
+thumb: /assets/img/aqueduct.png
 subtitle: World Resources Institute
 ---
 

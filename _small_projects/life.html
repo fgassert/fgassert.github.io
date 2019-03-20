@@ -1,0 +1,14 @@
+---
+layout: post
+title: WebGL Game of Life
+---
+
+<p>
+A WebGL implementation of Conway's Game of Life.
+</p>
+<button onclick="Life.start();Life.setFullscreen(true)">Play</button>
+<aside id="life-target" style="width:1px; height:1px; position: absolute; top:0%; left:50%">
+</aside>
+<aside style="position: absolute; left:0; top:0;">
+  {% include life/index.html %}
+</aside>

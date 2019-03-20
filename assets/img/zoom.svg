@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="20px" height="20px" viewBox="0 0 20 20" version="1.1" xmlns="http://www.w3.org/2000/svg" xmlns:xlink="http://www.w3.org/1999/xlink">
+    <!-- Generator: Sketch 52.6 (67491) - http://www.bohemiancoding.com/sketch -->
+    <title>zoom</title>
+    <desc>Created with Sketch.</desc>
+    <g id="zoom" stroke="none" stroke-width="1" fill="none" fill-rule="evenodd">
+        <g id="Group" transform="translate(3.000000, 4.000000)">
+            <path d="M8.88483706,12.1777303 L13.3797608,4.08686757 L9.87957836,0.586685138 L0.889730901,4.18262412 L8.88483706,12.1777303 Z" id="Path-3" stroke="#F2F2FA"></path>
+            <rect id="Rectangle" fill="#333136" x="0" y="4" width="9" height="9"></rect>
+            <rect id="Rectangle" fill="#333136" x="10" y="0" width="4" height="4"></rect>
+        </g>
+    </g>
+</svg>

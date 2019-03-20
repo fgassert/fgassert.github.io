@@ -1,6 +1,8 @@
 ---
 layout: post
 title: Shale-water poster
+banner: /assets/img/shale-water.png
+thumb: /assets/img/shale-water.png
 subtitle: Ceres
 ---
 

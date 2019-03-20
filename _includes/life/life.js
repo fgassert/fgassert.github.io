@@ -70,6 +70,7 @@ Life = ((document, window) => {
     ui.startBtn = createElement('button', 'life-btnStart -stopped', (e)=>{toggle();}, 'Play');
     ui.stepBtn = createElement('button', 'life-btnStep', (e)=>{step();}, 'Step');
     ui.speedBtn = createElement('button', 'life-btnSpeed', (e)=>{stepSpeed();}, 'Speed');
+    ui.zoomBtn = createElement('button', 'life-btnZoom', (e)=>{stepZoom();}, 'Zoom');
     ui.randomBtn = createElement('button', 'life-btnRandomize', (e)=>{randomize();}, 'Reset');
 
     ui.p3 = createElement('div', 'life-panel -top -left -transparent');
@@ -94,6 +95,7 @@ three neighbors will turn off.
 An empty cell with exactly three neighbors will turn on.
 These two simple rules create patterns that interact and evolve in lifelike ways.
 </p>
+<center><img src="/assets/img/life.svg"></img></center>
 <p>
 Described by mathematician John Conway in 1970, <a href="https://en.wikipedia.org/wiki/Conway%27s_Game_of_Life">Life</a> is the
 most well known if a class of mathematical models known as cellular automata.
@@ -118,6 +120,7 @@ such as the chaotic wave pattern on the <i>conus textile</i> <a href="https://en
     ui.p2.appendChild(ui.startBtn);
     ui.p2.appendChild(ui.stepBtn);
     ui.p2.appendChild(ui.speedBtn);
+    ui.p2.appendChild(ui.zoomBtn);
     ui.p2.appendChild(ui.randomBtn);
     //ui.p3.appendChild(ui.steps);
     //ui.p3.appendChild(ui.framerate);
@@ -456,6 +459,16 @@ such as the chaotic wave pattern on the <i>conus textile</i> <a href="https://en
       props.speed = 4 * 4;
     } else {
       props.speed /= 4;
+    };
+  };
+
+  const stepZoom = function(cellsize) {
+    if (cellsize) {
+      setCellsize(cellsize)
+    } else if (settings.cellsize <= 1) {
+      setCellsize(4*4);
+    } else {
+      setCellsize(settings.cellsize/2);
     };
   };
 

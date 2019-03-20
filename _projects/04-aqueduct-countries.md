@@ -1,6 +1,8 @@
 ---
 layout: post
 title: Aqueduct Country Rankings
+banner: /assets/img/aqueduct-countries.png
+thumb: /assets/img/aqueduct-countries.png
 subtitle: World Resources Institute
 ---
 

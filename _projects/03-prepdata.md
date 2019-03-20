@@ -1,6 +1,8 @@
 ---
 layout: post
 title: PREPdata
+banner: /assets/img/prepdata.png
+thumb: /assets/img/prepdata.png
 subtitle: World Resources Institute
 ---
 
