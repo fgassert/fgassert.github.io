@@ -105,14 +105,13 @@ regular tree-like structures, and on-off oscillatiors.
 Yet a select few create structures with rich interactions.
 </p>
 <p>
-These models have been studied for their implications to computer science,
+These models have been studied for their implications on computer science,
 physics, and philosophy. It is possible to create a universal computer
 within the bounds of Life (for an excellent explainer about how computers
 work, read how a few determined computer scientists programmed Tetris within a
-<a href="https://en.wikipedia.org/wiki/Conway%27s_Game_of_Life">30 trillion-cell Life field</a>.) Cellular automata can also be found within nature,
+<a href="https://codegolf.stackexchange.com/questions/11880/build-a-working-game-of-tetris-in-conways-game-of-life">30 trillion-cell Life field</a>.) Cellular automata can also be found within nature,
 such as the chaotic wave pattern on the <i>conus textile</i> <a href="https://en.wikipedia.org/wiki/Conus_textile">seashell</a>.
-</p>
-    `;
+</p>    `;
 
     ui.modalContainer.appendChild(ui.modal)
 
