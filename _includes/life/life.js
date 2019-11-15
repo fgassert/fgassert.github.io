@@ -98,7 +98,7 @@ These two simple rules create patterns that interact and evolve in lifelike ways
 <center><img src="/assets/img/life.svg"></img></center>
 <p>
 Described by mathematician John Conway in 1970, <a href="https://en.wikipedia.org/wiki/Conway%27s_Game_of_Life">Life</a> is the
-most well known if a class of mathematical models known as cellular automata.
+most well known of a class of mathematical models known as cellular automata.
 In these grid-based simulations, most rule sets result in uninteresting uniform
 states, completely empty or full fields. Some create branching patterns,
 regular tree-like structures, and on-off oscillatiors.
