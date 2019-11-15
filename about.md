@@ -18,16 +18,17 @@ Resilience and Preparedness](https://prepdata.org), and
 WRI's [Aqueduct](https://wri.org/aqueduct) Water Risk 
 Atlas.
 
+[› Get in touch.](/contact)
+
 <br>
 
 ## Clients
 
-[National Geographic Society](https://nationalgeographic.org) | 
-[New America](https://newamerica.org) | 
-[The World Bank](https://worldbank.org) |
-[World Resources Institute](https://wri.org) |
-[Vizzuality](https://vizzuality.com)
+National Geographic Society ・ 
+New America ・
+The World Bank ・
+World Resources Institute ・
+Vizzuality
 
-[› Get in touch.](/contact)
 
 
