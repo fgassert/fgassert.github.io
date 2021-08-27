@@ -8,7 +8,6 @@ With each project I seek to understand the fundamental issues, whether
 social, organizational, or technical, and find solutions that will last.
 
 I currently work on strategy and impact at [Vizzuality](https://vizzuality.com).
-
 In the past, I led data and digital project strategy as 
 [World Resources Institute's](https://wri.org) 
 Data for Impact Lead, where I managed the development of 
