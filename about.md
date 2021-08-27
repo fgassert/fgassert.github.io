@@ -7,7 +7,9 @@ subtitle: I help organizations accomplish more with data and technology.
 With each project I seek to understand the fundamental issues, whether
 social, organizational, or technical, and find solutions that will last.
 
-Most recently, I led data and digital project strategy as 
+I currently work on strategy and impact at [Vizzuality](https://vizzuality.com).
+
+In the past, I led data and digital project strategy as 
 [World Resources Institute's](https://wri.org) 
 Data for Impact Lead, where I managed the development of 
 [Resource Watch](https://resourcewatch.org) 
